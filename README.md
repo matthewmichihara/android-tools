@@ -15,4 +15,5 @@ phone2jar
 ---------
 
 Quickly pull apks from your phone and convert to jars for reading
+
 1. `ruby phone2jar.rb --search="foo"`
