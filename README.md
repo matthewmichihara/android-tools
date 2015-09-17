@@ -1,5 +1,5 @@
-android-misc
-============
+android-tools
+=============
 Android utility scripts that I use
 
 checkpoint
