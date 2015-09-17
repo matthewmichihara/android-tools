@@ -14,7 +14,7 @@ p options
 p ARGV
 
 search_term = options[:search].downcase
-packages = `adb -d shell pm list packages`.lines.map {|l| l.chomp.downcase.split(":").last}
+packages = `adb shell pm list packages`.lines.map {|l| l.chomp.downcase.split(":").last}
 
 matches = packages.select {|p| p.include? search_term}
 matches.each_with_index do |match, i|
@@ -27,11 +27,11 @@ apk_index = gets.chomp.to_i
 package_name = matches[apk_index]
 puts "You selected #{package_name}"
 
-package_path = `adb -d shell pm path #{package_name}`.chomp.split(":").last
+package_path = `adb shell pm path #{package_name}`.chomp.split(":").last
 puts "Package path is #{package_path}"
 
-`adb -d pull #{package_path}`
+`adb pull #{package_path} /tmp/`
 apk_name = package_path.split("/").last
 
-`tar xvf #{apk_name} classes.dex`
+`tar xvf /tmp/#{apk_name} classes.dex`
 `d2j-dex2jar classes.dex --output #{package_name}.jar`
