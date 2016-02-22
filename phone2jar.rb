@@ -8,13 +8,22 @@ OptionParser.new do |opts|
   opts.on("-sNAME", "--search=NAME", "Search connected device for name") do |s|
     options[:search] = s
   end
+
+  opts.on("-d", "--device", "Run on device") do |v|
+    options[:device] = v
+  end
 end.parse!
 
 p options
 p ARGV
 
 search_term = options[:search].downcase
-packages = `adb shell pm list packages`.lines.map {|l| l.chomp.downcase.split(":").last}
+adb_base = "adb"
+if options[:device] != nil then
+  adb_base = "adb -d"
+end
+
+packages = `#{adb_base} shell pm list packages`.lines.map {|l| l.chomp.downcase.split(":").last}
 
 matches = packages.select {|p| p.include? search_term}
 matches.each_with_index do |match, i|
@@ -27,10 +36,10 @@ apk_index = gets.chomp.to_i
 package_name = matches[apk_index]
 puts "You selected #{package_name}"
 
-package_path = `adb shell pm path #{package_name}`.chomp.split(":").last
+package_path = `#{adb_base} shell pm path #{package_name}`.chomp.split(":").last
 puts "Package path is #{package_path}"
 
-`adb pull #{package_path} /tmp/`
+`#{adb_base} pull #{package_path} /tmp/`
 apk_name = package_path.split("/").last
 
 `tar xvf /tmp/#{apk_name} classes.dex`
